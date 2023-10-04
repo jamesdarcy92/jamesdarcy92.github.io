@@ -4,10 +4,874 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+
+    /* Load essential styling inline to prevent rendering blocking */
+    @font-face {
+      font-family: 'Red Hat Mono';
+      src: url('fonts/RedHatMono-VariableFont_wght.ttf');
+    }
+
+    body,
+    html {
+      height: 100%;
+    }
+
+    body {
+      margin: 8px 0;
+      overflow-x: hidden;
+      background-color: #171717;
+      font-family: 'Red Hat Mono', Helvetica, sans-serif;
+    }
+
+    body.modal-open {
+      height: 100vh;
+      overflow-y: hidden;
+    }
+
+    @supports (-moz-appearance:none) {
+      body.modal-open {
+        height: 100vh;
+        overflow-y: hidden;
+        position: fixed;
+      }
+    }
+
+    /* Landing background styling for parallax scrolling effect */
+    .parallax {
+      /* The image used */
+      background-image:
+        linear-gradient(to bottom,
+          rgba(23, 23, 23, 0.4),
+          rgba(23, 23, 23, 1)), url('../images/landing-background.webp');
+
+      /* Full height */
+      height: 100vh;
+
+      /* Create the parallax scrolling effect */
+      background-attachment: fixed;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Mobile specific styling for landing background */ 
+    .mobile {
+      background-attachment: scroll;
+    }
+
+    /* name and title on landing */
+    .details .name {
+      color: #fff;
+      font-size: 2.8em;
+      font-family: 'Red Hat Mono', monospace;
+      line-height: 1.0em;
+      font-weight: 400;
+    }
+
+    .details .title {
+      color: #fff;
+      font-size: 2.5em;
+      font-family: 'Red Hat Mono', monospace;
+    }
+  </style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+  <link rel="preload" as="image" href="images/landing-background.webp">
+  <link rel="stylesheet" type="text/css" href="css/main.css">
+  <script>
+    // Load essential JS to prevent rendering blocking
+
+    // Don't apply parralax scrolling on mobile as it's jumpy on mobile browsers */
+    function shouldParralaxScrollingBeApplied() {
+      if (window.mobileCheck()) {
+
+        var background = document.getElementById('landingBackgroundImage');
+        background.classList.add("mobile");
+
+        // Mobile browsers, FF mobile in particular, have a problem with vh units in CSS when setting height of background image.
+        // This converts vh to px and applies that in mobile browsers to avoid the background image from jumping when the browser
+        // address bar hides when a user scrolls.
+        function calcVH() {
+          var vH = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+          background.setAttribute("style", "height:" + vH + "px;");
+        }
+        calcVH();
+        window.addEventListener('onorientationchange', calcVH, true);
+      }
+    }
+
+    // Check if loaded in mobile browser
+    window.mobileCheck = function () {
+      let check = false;
+      (function (a) { if (/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino/i.test(a) || /1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(a.substr(0, 4))) check = true; })(navigator.userAgent || navigator.vendor || window.opera);
+      return check;
+    };
+
+    window.onload = shouldParralaxScrollingBeApplied;
+
+    // The below JS uses Intersection Observer API to apply the fading effect to any element with reveal classname
+    const numSteps = 10.0;
+    let boxElementsToReveal;
+    let prevRatio = 0.0;
+    let increasingRatio = "ratio";
+    let decreasingRatio = "ratio";
+
+
+    // Gather elements and create observers
+    window.addEventListener(
+      "load",
+      (event) => {
+        boxElementsToReveal = document.querySelectorAll(".reveal");
+        createObservers();
+      },
+      false,
+    );
+
+    // Informs the observers how to handle the intersect.
+    function createObservers() {
+      let opacityObserver;
+
+      let options = {
+        root: null,
+        rootMargin: "0px",
+        threshold: buildThresholdList(),
+      };
+
+      opacityObserver = new IntersectionObserver(handleIntersect, options);
+
+      boxElementsToReveal.forEach((element) => {
+        opacityObserver.observe(element);
+      });
+
+    }
+
+    // Only use 10 steps for threshold list. Anymore has no real visual impact when using opacity.
+    function buildThresholdList() {
+      let thresholds = [];
+      let numSteps = 10;
+
+      for (let i = 1.0; i <= numSteps; i++) {
+        let ratio = i / numSteps;
+        thresholds.push(ratio);
+      }
+
+      thresholds.push(0);
+      return thresholds;
+    }
+
+    // Here is where the opacity will be increase or decrease depending on how much of the element is in view
+    function handleIntersect(entries, observer) {
+      entries.forEach((entry) => {
+        if (entry.intersectionRatio > prevRatio) {
+
+          entry.target.style.opacity = increasingRatio.replace(
+            "ratio",
+            entry.intersectionRatio,
+          );
+        } else {
+          entry.target.style.opacity = decreasingRatio.replace(
+            "ratio",
+            entry.intersectionRatio,
+          );
+        }
+
+        prevRatio = entry.intersectionRatio;
+      });
+    }
+  </script>
   <meta charset="UTF-8">
   <title>James Darcy - Software Developer</title>
 </head>
 
 <body>
-  <div>Hello World!</div>
+  <div aria-hidden="true" class="filler">&nbsp;</div>
+  <header>
+    <div id="navbar">
+      <div id="logoDiv">
+        <img id="logo" role="button" aria-label="Site logo. Click to scroll to top" alt="site logo"
+          src="images/logo.webp" tabindex="0" onclick="smoothScroll('navbar')"
+          onkeypress="smoothScroll('navbar', event)" />
+      </div>
+      <nav aria-label="Site navigation bar">
+        <ul role="menubar">
+          <li class="horiz-nav-item" role="none">
+            <div role="menuitem" tabindex="0" aria-label="Navigate to Introduction section"
+              class="link horizontal-nav-item" onkeydown="navigateToMenuItem(event)"
+              onclick="smoothScroll('introduction');" onkeypress="smoothScroll('introduction', event);"
+              ontouchcancel="this.classList.remove('navbar-link-hover')"
+              ontouchend="this.classList.remove('navbar-link-hover')"
+              ontouchstart="this.classList.add('navbar-link-hover')"
+              onmouseover="this.classList.add('navbar-link-hover')"
+              onmouseout="this.classList.remove('navbar-link-hover')" onfocus="this.classList.add('navbar-link-hover')"
+              onblur="this.classList.remove('navbar-link-hover')">
+              <div>
+                <div>
+                  <span>Introduction</span>
+                </div>
+              </div>
+            </div>
+          </li>
+          <li class="horiz-nav-item" role="none">
+            <div role="menuitem" tabindex="0" aria-label="Navigate to Portfolio section"
+              class="link horizontal-nav-item" onkeydown="navigateToMenuItem(event)"
+              onclick="smoothScroll('portfolio');" onkeypress="smoothScroll('portfolio', event);"
+              ontouchcancel="this.classList.remove('navbar-link-hover')"
+              ontouchend="this.classList.remove('navbar-link-hover')"
+              ontouchstart="this.classList.add('navbar-link-hover')"
+              onmouseover="this.classList.add('navbar-link-hover')"
+              onmouseout="this.classList.remove('navbar-link-hover')" onfocus="this.classList.add('navbar-link-hover')"
+              onblur="this.classList.remove('navbar-link-hover')">
+              <div>
+                <div>
+                  <span>Portfolio</span>
+                </div>
+              </div>
+            </div>
+          </li>
+          <li class="horiz-nav-item" role="none">
+            <div role="menuitem" tabindex="0" aria-label="Navigate to Timeline section" class="link horizontal-nav-item"
+              onkeydown="navigateToMenuItem(event)" onclick="smoothScroll('timeline');"
+              onkeypress="smoothScroll('timeline', event);" ontouchcancel="this.classList.remove('navbar-link-hover')"
+              ontouchend="this.classList.remove('navbar-link-hover')"
+              ontouchstart="this.classList.add('navbar-link-hover')"
+              onmouseover="this.classList.add('navbar-link-hover')"
+              onmouseout="this.classList.remove('navbar-link-hover')" onfocus="this.classList.add('navbar-link-hover')"
+              onblur="this.classList.remove('navbar-link-hover')">
+              <div>
+                <div>
+                  <span>Timeline</span>
+                </div>
+              </div>
+            </div>
+          </li>
+          <li class="horiz-nav-item" role="none">
+            <div role="menuitem" tabindex="0" aria-label="Navigate to Gallery section" class="link horizontal-nav-item"
+              onkeydown="navigateToMenuItem(event)" onclick="smoothScroll('photos');"
+              onkeypress="smoothScroll('photos', event);" ontouchcancel="this.classList.remove('navbar-link-hover')"
+              ontouchend="this.classList.remove('navbar-link-hover')"
+              ontouchstart="this.classList.add('navbar-link-hover')"
+              onmouseover="this.classList.add('navbar-link-hover')"
+              onmouseout="this.classList.remove('navbar-link-hover')" onfocus="this.classList.add('navbar-link-hover')"
+              onblur="this.classList.remove('navbar-link-hover')">
+              <div>
+                <div>
+                  <span>Gallery</span>
+                </div>
+              </div>
+            </div>
+          </li>
+          <li class="horiz-nav-item" role="none">
+            <div role="menuitem" tabindex="0" aria-label="Navigate to Links section" class="link horizontal-nav-item"
+              onkeydown="navigateToMenuItem(event)" onclick="smoothScroll('links');"
+              onkeypress="smoothScroll('links', event);" ontouchcancel="this.classList.remove('navbar-link-hover')"
+              ontouchend="this.classList.remove('navbar-link-hover')"
+              ontouchstart="this.classList.add('navbar-link-hover')"
+              onmouseover="this.classList.add('navbar-link-hover')"
+              onmouseout="this.classList.remove('navbar-link-hover')" onfocus="this.classList.add('navbar-link-hover')"
+              onblur="this.classList.remove('navbar-link-hover')">
+              <div>
+                <div>
+                  <span>Links</span>
+                </div>
+              </div>
+            </div>
+          </li>
+          <li class="dropdown" role="none">
+            <div role="button" aria-expanded="false" aria-controls="dropdown-content"
+              aria-label="Dropdown navigation menu" aria-haspopup="true" tabindex="0" id="dropdown-button"
+              class="dropdown-button-container dropbtn link" onclick="toggleDropDownMenu(this)"
+              onkeypress="toggleDropDownMenu(this, event);" ontouchcancel="this.classList.remove('navbar-link-hover')"
+              ontouchend="this.classList.remove('navbar-link-hover')"
+              ontouchstart="this.classList.add('navbar-link-hover')"
+              onmouseover="this.classList.add('navbar-link-hover')"
+              onmouseout="this.classList.remove('navbar-link-hover')" onfocus="this.classList.add('navbar-link-hover')"
+              onblur="this.classList.remove('navbar-link-hover')">
+              <div class="strip-1"></div>
+              <div class="strip-2"></div>
+              <div class="strip-3"></div>
+            </div>
+            <div id="dropdown-content" role="menu" tabindex="-1">
+              <div role="menuitem" aria-label="Navigate to Introduction section" tabindex="0" class="link"
+                onkeypress="smoothScroll('introduction', event);" onclick="smoothScroll('introduction');"
+                ontouchcancel="this.classList.remove('link-hover')" ontouchend="this.classList.remove('link-hover')"
+                ontouchstart="this.classList.add('link-hover')" onmouseover="this.classList.add('link-hover')"
+                onmouseout="this.classList.remove('link-hover')" onfocus="this.classList.add('link-hover')"
+                onblur="this.classList.remove('link-hover')">Introduction</div>
+              <div role="menuitem" aria-label="Navigate to Portfolio section" tabindex="0" class="link"
+                onkeypress="smoothScroll('portfolio', event);" onclick="smoothScroll('portfolio');"
+                ontouchcancel="this.classList.remove('link-hover')" ontouchend="this.classList.remove('link-hover')"
+                ontouchstart="this.classList.add('link-hover')" onmouseover="this.classList.add('link-hover')"
+                onmouseout="this.classList.remove('link-hover')" onfocus="this.classList.add('link-hover')"
+                onblur="this.classList.remove('link-hover')">Portfolio</div>
+              <div role="menuitem" aria-label="Navigate to Timeline section" tabindex="0" class="link"
+                onkeypress="smoothScroll('timeline', event);" onclick="smoothScroll('timeline');"
+                ontouchcancel="this.classList.remove('link-hover')" ontouchend="this.classList.remove('link-hover')"
+                ontouchstart="this.classList.add('link-hover')" onmouseover="this.classList.add('link-hover')"
+                onmouseout="this.classList.remove('link-hover')" onfocus="this.classList.add('link-hover')"
+                onblur="this.classList.remove('link-hover')">Timeline</div>
+              <div role="menuitem" aria-label="Navigate to Gallery section" tabindex="0" class="link"
+                onkeypress="smoothScroll('photos', event);" onclick="smoothScroll('photos');"
+                ontouchcancel="this.classList.remove('link-hover')" ontouchend="this.classList.remove('link-hover')"
+                ontouchstart="this.classList.add('link-hover')" onmouseover="this.classList.add('link-hover')"
+                onmouseout="this.classList.remove('link-hover')" onfocus="this.classList.add('link-hover')"
+                onblur="this.classList.remove('link-hover')">Gallery</div>
+              <div role="menuitem" aria-label="Navigate to Links section" tabindex="0" class="link"
+                onkeypress="smoothScroll('links', event);" onclick="smoothScroll('links');"
+                ontouchcancel="this.classList.remove('link-hover')" ontouchend="this.classList.remove('link-hover')"
+                ontouchstart="this.classList.add('link-hover')" onmouseover="this.classList.add('link-hover')"
+                onmouseout="this.classList.remove('link-hover')" onfocus="this.classList.add('link-hover')"
+                onblur="this.classList.remove('link-hover')" onkeydown="jumpBackToTopMenuItem(event);">Links</div>
+            </div>
+          </li>
+        </ul>
+      </nav>
+      <div class="progress-container">
+        <div class="progress-bar" id="myBar"></div>
+      </div>
+    </div>
+  </header>
+  <main>
+    <div id="landingBackgroundImage" class="parallax">
+      <div>
+        <div class="details">
+          <h1 class="landing-heading">
+            <p class="name">James Darcy</p>
+          </h1>
+          <p class="title">Software Developer</p>
+        </div>
+      </div>
+    </div>
+    <section id="introduction">
+      <div class="container">
+        <div class="intro">
+          <div class="section-title-container">
+            <h2>
+              <p class="section-title" tabindex="-1">About me</p>
+            </h2>
+          </div>
+          <div class="portrait reveal">
+            <img src="images/profile-pic.webp" alt="A picture of me" />
+          </div>
+          <div class="intro-text reveal">
+            <p>Hello! I'm James Darcy, a seasoned software developer with a decade of expertise in Full Stack
+              Development.</p>
+            <p>Over the years, I've honed my skills in Java and JavaScript and related technologies. I have worked on
+              projects across the stack, ranging from working on financial and rules engines, designing and implementing
+              end to end security solutions to crafting dynamic, responsive and accessible front-end interfaces. I take
+              pride in turning complex challenges into elegant, practical solutions.</p>
+            <p>In my personal life, I am keenly interested in sport, travel, food and current affairs. A personal
+              highlight of mine was representing Ireland on two occasions, in 2013 and 2015 at the European and World
+              Ultimate Beach championships.</p>
+            <p>This website serves as a showcase of my journey and the projects I've worked on over the years.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="portfolio">
+      <div class="portfolio-container container">
+        <div class="section-title-div">
+          <div class="section-title-container">
+            <h2>
+              <p class="section-title" tabindex="-1">Portfolio</p>
+            </h2>
+            <h3 class="section-title-subtitle">My skills and experience with various technologies</h3>
+          </div>
+        </div>
+        <div class="grid-container">
+          <div class="grid-item first fade-left">
+            <h4>Technologies</h4>
+            <ul>
+              <li>Java / J2EE Technologies</li>
+              <li>JUnit / JMockit / SonarQube / EclLemma</li>
+              <li>JavaScript / Dojo / DevTools / Intern JS Test Framework / TestCafe</li>
+              <li>HTML / CSS / SASS</li>
+              <li>XML / XSL / XSD</li>
+              <li>REST / JSON / POSTMan</li>
+              <li>GIT / RTC / Clearcase / ClearQuest</li>
+              <li>SQL and Relational DBs (DB2 / OracleDB / H2)</li>
+              <li>WebSphere / Tomcat Application Server</li>
+              <li>MacOS and Windows (Terminal / CMD) Development</li>
+              <li>Eclipse / VS Code</li>
+              <li>JAWS / VoiceOver / IBM Equal Access Accessibility Checker</li>
+              <li>Other: ANT / Docker / Jenkins / Artifactory</li>
+            </ul>
+          </div>
+          <div class="grid-item second fade-right">
+            <h4>Skills and Methodologies</h4>
+            <ul>
+              <li>Full Stack Development</li>
+              <li>Agile Methodologies</li>
+              <li>Software and Architectural Design</li>
+              <li>Communication and Mentoring</li>
+              <li>W3C Accessibility First Thinking and Best Practices</li>
+              <li>Responsive Layout and Design and Mobile First Thinking</li>
+              <li>Cross-Browser Compatibility</li>
+              <li>CI / CD</li>
+              <li>Software Documentation</li>
+              <li>Test-Driven Development</li>
+              <li>Secure Coding</li>
+              <li>Analytical Skills</li>
+              <li>Code Reviews and Code Quality Analysis</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="timeline">
+      <div class="container">
+        <div class="timeline-div">
+          <div class="section-title-container">
+            <h2>
+              <p class="section-title" tabindex="-1">My career</p>
+            </h2>
+          </div>
+          <div class="timeline-milestones">
+            <div class="milestone">
+              <div class="milestone-marker" aria-controls="milestone-body-1" aria-expanded="false" role="button"
+                tabindex="0" onclick="toggleTimelineMilestone(this, event)"
+                onkeypress="toggleTimelineMilestone(this, event)" ontouchcancel="this.classList.remove('marker-hover')"
+                ontouchend="this.classList.remove('marker-hover')" ontouchstart="this.classList.add('marker-hover')"
+                onmouseover="this.classList.add('marker-hover')" onmouseout="this.classList.remove('marker-hover')"
+                onfocus="this.classList.add('marker-hover')" onblur="this.classList.remove('marker-hover')">
+                <span aria-hidden="true" class="milestone-icon material-symbols-outlined">chevron_left</span>
+              </div>
+              <div class="milestone-text" tabindex="-1">
+                <p class="time-period">October 2022 - Present</p>
+                <div class="milestone-heading"><strong><u>Merative</u></strong></div>
+                <p class="milestone-intro">I am tech lead for the Client Technical Infrastructure team where I work
+                  mainly on client/front-end tasks but often work across the tech stack.
+                  <br />
+                  <br />
+                  <strong>Main Highlights: </strong>
+                  <br />
+                  - I designed and developed a propietry security solution to prevent tampering of URLs.
+                  <br />
+                  - Tech Lead for multiple accessibility projects.
+                </p>
+                <p class="milestone-body hidden" id="milestone-body-1" tabindex="-1">
+                  <strong>Overview: </strong>
+                  <br />
+                  In my day to day job I work closely with software architects, FVT/SVT and the business team to design
+                  and develop high standard fixes and enhancements. I also work on high priority customer support
+                  tickets where I collaborate with the services team to diagnose and fix customer issues.
+                  <br />
+                  I mentor and support junior engineers on the team, where I share domain knowledge and coding standards
+                  and perform code reviews where I provide detailed feedback and aim to share best practices.
+                  <br />
+                  I also provide tech analysis during our sprint planning and refinement meetings so business and
+                  project management can plan accurately and efficiently.
+                  <br />
+                </p>
+                <span class="milestone-ellipsis material-symbols-outlined" aria-controls="milestone-body-1"
+                  aria-expanded="false" tabindex="0" role="button"
+                  onclick="toggleTimelineMilestone(this.offsetParent.firstElementChild, event)"
+                  onkeypress="toggleTimelineMilestone(this.offsetParent.firstElementChild, event)"
+                  ontouchcancel="this.classList.remove('ellipsis-hover')"
+                  ontouchend="this.classList.remove('ellipsis-hover')"
+                  ontouchstart="this.classList.add('ellipsis-hover')" onmouseover="this.classList.add('ellipsis-hover')"
+                  onmouseout="this.classList.remove('ellipsis-hover')" onfocus="this.classList.add('ellipsis-hover')"
+                  onblur="this.classList.remove('ellipsis-hover')">more_horiz</span>
+              </div>
+            </div>
+            <div class="milestone">
+              <div class="milestone-marker" aria-controls="milestone-body-2" aria-expanded="false" role="button"
+                tabindex="0" onclick="toggleTimelineMilestone(this, event)"
+                onkeypress="toggleTimelineMilestone(this, event)" ontouchcancel="this.classList.remove('marker-hover')"
+                ontouchend="this.classList.remove('marker-hover')" ontouchstart="this.classList.add('marker-hover')"
+                onmouseover="this.classList.add('marker-hover')" onmouseout="this.classList.remove('marker-hover')"
+                onfocus="this.classList.add('marker-hover')" onblur="this.classList.remove('marker-hover')">
+                <span aria-hidden="true" class="milestone-icon material-symbols-outlined">chevron_right</span>
+              </div>
+              <div class="milestone-text" tabindex="-1">
+                <p class="time-period">July 2013 - October 2022</p>
+                <div class="milestone-heading"><strong><u>IBM Watson Health</u></strong>
+                </div>
+                <p class="milestone-intro">I worked across multiple teams, gaining valuable experience with server and
+                  client side tech and later being Tech Lead for the Client Infrastructure team.
+                  <br />
+                  <br />
+                  <strong>Main Highlights: </strong>
+                  <br />
+                  - Worked extensively on client infrastructure, including accessibility defect fixes and enhancements
+                  where I lead multiple projects on this.
+                  <br />
+                  - Developed an end to end Microsoft Word integration POC using WebDav.
+                  <br />
+                  - Created a tool using NodeJS to detect duplicated base type domains, which efficiently parsed
+                  thousands of entry throughout the code stack.
+                  <br />
+                  - Implemented defect fixes and enchancements to industry leading financials and rules engines.
+                  <br />
+                  - Passed the Curam Professional Developer Certification course.
+                </p>
+                <p class="milestone-body hidden" id="milestone-body-2" tabindex="-1">
+                  <strong>Overview: </strong>
+                  <br />
+                  I worked on a number of different projects while working on the Curam application where I worked with
+                  both server side and client side tech.
+                  While on these teams, I gained valuable experience working with Java and Javascript technolgies in an
+                  Agile environment.
+                  <br />
+                  <br />
+                  I started out with the Eligibility and Entitlement team where I was heavily involved in both the
+                  Financials Engine and the Rule Engine for the application.
+                  I was also involved in a number of different projects such as:
+                  <br />
+                  <br />
+                  - Creating a meta-data tool for analysing and describing the data that is present within the Curam
+                  application.
+                  <br />
+                  - Creating dashboards using BIRT which provided a visual representation of the background processes
+                  and workflows that are happening in the background of the Curam application.
+                  <br />
+                  - A complete re-skin of the Curam UI.
+                  <br />
+                  <br />
+                  I then moved into the client infrastructure team, where I:
+                  <br />
+                  - Worked extensively on accessibility defect fixes and enhancements and lead multiple projects on
+                  this.
+                  <br />
+                  - Developed an end to end Microsoft Word integration solution using WebDav.
+                  <br />
+                  - Created a tool using nodeJS to detect duplicated base type domains, searching thousands of entry
+                  throughout the code stack.
+                  <br />
+                  - Became tech lead, working on a variety of defects, enhancements and customer support tickets while
+                  supporting and mentoring junior team members.
+                  <br />
+                </p>
+                <span class="milestone-ellipsis material-symbols-outlined" aria-controls="milestone-body-2"
+                  aria-expanded="false" tabindex="0" role="button"
+                  onclick="toggleTimelineMilestone(this.offsetParent.firstElementChild, event)"
+                  onkeypress="toggleTimelineMilestone(this.offsetParent.firstElementChild, event)"
+                  ontouchcancel="this.classList.remove('ellipsis-hover')"
+                  ontouchend="this.classList.remove('ellipsis-hover')"
+                  ontouchstart="this.classList.add('ellipsis-hover')" onmouseover="this.classList.add('ellipsis-hover')"
+                  onmouseout="this.classList.remove('ellipsis-hover')" onfocus="this.classList.add('ellipsis-hover')"
+                  onblur="this.classList.remove('ellipsis-hover')">more_horiz</span>
+              </div>
+            </div>
+            <div class="milestone">
+              <div class="milestone-marker" aria-controls="milestone-body-3" aria-expanded="false" role="button"
+                tabindex="0" onclick="toggleTimelineMilestone(this, event)"
+                onkeypress="toggleTimelineMilestone(this, event)" ontouchcancel="this.classList.remove('marker-hover')"
+                ontouchend="this.classList.remove('marker-hover')" ontouchstart="this.classList.add('marker-hover')"
+                onmouseover="this.classList.add('marker-hover')" onmouseout="this.classList.remove('marker-hover')"
+                onfocus="this.classList.add('marker-hover')" onblur="this.classList.remove('marker-hover')">
+                <span aria-hidden="true" class="milestone-icon material-symbols-outlined">chevron_left</span>
+              </div>
+              <div class="milestone-text" tabindex="-1">
+                <p class="time-period">April 2012 - September 2012</p>
+                <div class="milestone-heading"><strong><u>Cúram Software</u></strong></div>
+                <p class="milestone-intro">Software Developer internship during my third year of university, where I
+                  gained industry experience working on the Curam application.
+                  <br />
+                  <br />
+                  <strong>Main Highlights: </strong>
+                  <br />
+                  Automation of an intensive build process using Java and Apache ANT.
+                </p>
+                <p class="milestone-body hidden" id="milestone-body-3" tabindex="-1">
+                  <strong>Overview: </strong>
+                  <br />
+                  Throughout the course of my internship with Curam Software, I gained valuable experience with software
+                  industry standards and practices, and also with a lot of various tools and technologies, such as Java
+                  and J2EE technologies, XML, Apache ANT and Tomcat, Eclipse and IBM's WebSphere, DB2, ClearCase and
+                  ClearQuest.
+                  Over the course of the internship I worked on tasks such as fixing defects in the Curam Application,
+                  Server re-mediation and automation of build processes.
+                </p>
+                <span class="milestone-ellipsis material-symbols-outlined" aria-controls="milestone-body-3"
+                  aria-expanded="false" tabindex="0" role="button"
+                  onclick="toggleTimelineMilestone(this.offsetParent.firstElementChild, event)"
+                  onkeypress="toggleTimelineMilestone(this.offsetParent.firstElementChild, event)"
+                  ontouchcancel="this.classList.remove('ellipsis-hover')"
+                  ontouchend="this.classList.remove('ellipsis-hover')"
+                  ontouchstart="this.classList.add('ellipsis-hover')" onmouseover="this.classList.add('ellipsis-hover')"
+                  onmouseout="this.classList.remove('ellipsis-hover')" onfocus="this.classList.add('ellipsis-hover')"
+                  onblur="this.classList.remove('ellipsis-hover')">more_horiz</span>
+              </div>
+            </div>
+            <div class="milestone">
+              <div class="milestone-marker" aria-controls="milestone-body-4" aria-expanded="false" role="button"
+                tabindex="0" onclick="toggleTimelineMilestone(this, event)"
+                onkeypress="toggleTimelineMilestone(this, event)" ontouchcancel="this.classList.remove('marker-hover')"
+                ontouchend="this.classList.remove('marker-hover')" ontouchstart="this.classList.add('marker-hover')"
+                onmouseover="this.classList.add('marker-hover')" onmouseout="this.classList.remove('marker-hover')"
+                onfocus="this.classList.add('marker-hover')" onblur="this.classList.remove('marker-hover')">
+                <span aria-hidden="true" class="milestone-icon material-symbols-outlined">chevron_right</span>
+              </div>
+              <div class="milestone-text" tabindex="-1">
+                <p class="time-period">September 2009 - June 2013</p>
+                <div class="milestone-heading"><strong><u>Dublin City University</u></strong></div>
+                <p class="milestone-intro">I studied Computer Applications in Dublin City University</p>
+                <br />
+                <strong>Main Highlights: </strong>
+                <br />
+                - Graduated with a B.Sc. 2nd Class Honours, Grade 1.
+                <br />
+                - FYP: Implemented Learning2Write which is an Android application whose purpose is to assist in the
+                process of teaching young children to write letters of the alphabet.
+                <br />
+                - TYP: Implemented Learning2Write which is an SMS Android application whose main feature was to prevent
+                users from sending texts when inebriated.
+                <br />
+                <p class="milestone-body hidden" id="milestone-body-4" tabindex="-1">
+                  <strong>Overview: </strong>
+                  <br />
+                  During the course of my degree in Dublin City University, I gained valuable experience in a number of
+                  areas of Computer Science and Software Development.
+                  <br />
+                  The two main projects I implemented during this time were:
+                  <br />
+                  <strong>Learning2Write</strong> an Android application whose purpose is to assist in the process of
+                  teaching young children to write letters of the alphabet. The app rendered a number of points on
+                  screen, which make up the shape of a letter. Four versions of the letter are displayed with varying
+                  amounts of points. Each point detects if a touch intersects it and if all are traversed through, the
+                  letter is considered as being completed successfully. Learning2Write allows for separate student and
+                  teacher logins, where the teacher's view will allow for them to keep track of what letters the
+                  students have drawn, how many times they have attempted a certain letter, and how many times they
+                  drawn the letter successfully.
+                  <br />
+                  <strong>extendText</strong> an SMS Android application whose main feature was to prevent users from
+                  sending texts when inebriated. Users could enable the feature and before sending a text would be
+                  required to pass a number of sobriety tests which included memory, reactionary and arithmetic tests.
+                  <br />
+                  <br />
+                  Throughout my degree, I was taught an array of modules such as: Operating Systems, Object Oriented
+                  Design and Models, Data Structures & Algorithm Design, Mathematics, Software Patterns & Design,
+                  Computability & Complexity, Computer Networks, Web Design, Systems Analysis, Advanced Algorithms & A.I
+                  Search, Human Computer Interaction, Software Testing, Multimedia Technology, Compiler Construction,
+                  Computer Graphics and, Cryptography & Security Protocols.
+                  <br />
+                  <br />
+                  From those subjects, I've gained experience in the following technologies: Java, XML, Android SDK,
+                  Eclipse IDE, UML, C#, Haskell, SQL, PHP, HTML, CSS, C, C++, Java3D, JavaCC, 8086 Assembly, MIPS
+                  Assembly.
+                </p>
+                <span class="milestone-ellipsis material-symbols-outlined" aria-controls="milestone-body-4"
+                  aria-expanded="false" tabindex="0" role="button"
+                  onclick="toggleTimelineMilestone(this.offsetParent.firstElementChild, event)"
+                  onkeypress="toggleTimelineMilestone(this.offsetParent.firstElementChild, event)"
+                  ontouchcancel="this.classList.remove('ellipsis-hover')"
+                  ontouchend="this.classList.remove('ellipsis-hover')"
+                  ontouchstart="this.classList.add('ellipsis-hover')" onmouseover="this.classList.add('ellipsis-hover')"
+                  onmouseout="this.classList.remove('ellipsis-hover')" onfocus="this.classList.add('ellipsis-hover')"
+                  onblur="this.classList.remove('ellipsis-hover')">more_horiz</span>
+              </div>
+            </div>
+            <div class="milestone">
+              <div class="milestone-marker" aria-controls="milestone-body-5" aria-expanded="false" role="button"
+                tabindex="0" onclick="toggleTimelineMilestone(this, event)"
+                onkeypress="toggleTimelineMilestone(this, event)" ontouchcancel="this.classList.remove('marker-hover')"
+                ontouchend="this.classList.remove('marker-hover')" ontouchstart="this.classList.add('marker-hover')"
+                onmouseover="this.classList.add('marker-hover')" onmouseout="this.classList.remove('marker-hover')"
+                onfocus="this.classList.add('marker-hover')" onblur="this.classList.remove('marker-hover')">
+                <span aria-hidden="true" class="milestone-icon material-symbols-outlined">chevron_left</span>
+              </div>
+              <div class="milestone-text" tabindex="-1">
+                <p class="time-period">September 2002 - June 2009</p>
+                <div class="milestone-heading"><strong><u>Athboy Community School</u></strong></div>
+                <p class="milestone-intro">
+                  <br />
+                  <strong>Main Highlight: </strong>
+                  <br />
+                  - Achieved 430 points in the Leaving Cert.
+                </p>
+                <p class="milestone-body hidden" id="milestone-body-5" tabindex="-1">
+                  <strong>Overview: </strong>
+                  <br />
+                  I achieved high grades throughout my education. In addition to achieving high grades in the Leaving
+                  and Junior Cert (which included 4 As and 7 Bs in all honours subjects), I also achieved the following:
+                  <br />
+                  <br />
+                  - When I was in 6th year, six other students from my school and I were invited to, and took part in a
+                  research project for a PhD student studying in NUI Maynooth, comparing highly achieving academic
+                  students in Co. Meath and in Vancouver, Canada.
+                  <br />
+                  - In my 1st year I was invited and undertook an SAT test, for high achieving students in St.Patrick's
+                  College, Dublin.
+                </p>
+                <span class="milestone-ellipsis material-symbols-outlined" aria-controls="milestone-body-5"
+                  aria-expanded="false" tabindex="0" role="button"
+                  onclick="toggleTimelineMilestone(this.offsetParent.firstElementChild, event)"
+                  onkeypress="toggleTimelineMilestone(this.offsetParent.firstElementChild, event)"
+                  ontouchcancel="this.classList.remove('ellipsis-hover')"
+                  ontouchend="this.classList.remove('ellipsis-hover')"
+                  ontouchstart="this.classList.add('ellipsis-hover')" onmouseover="this.classList.add('ellipsis-hover')"
+                  onmouseout="this.classList.remove('ellipsis-hover')" onfocus="this.classList.add('ellipsis-hover')"
+                  onblur="this.classList.remove('ellipsis-hover')">more_horiz</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="photos">
+      <div class="container">
+        <div class="section-title-div">
+          <div class="section-title-container">
+            <h2>
+              <p class="section-title" tabindex="-1">Gallery</p>
+            </h2>
+            <h3 class="section-title-subtitle">A few snaps from my life</h3>
+          </div>
+        </div>
+      </div>
+      <div id="gallery">
+        <div class="gallery-image"><img src="images/bike_thumb.webp"
+            alt="Image of me on the Waterford greenway." /><span class="image-mask"
+            ontouchcancel="this.style.opacity='0.2'" ontouchend="this.style.opacity='0.2'"
+            ontouchstart="this.style.opacity='0.0'" onmouseover="this.style.opacity='0.0'"
+            onmouseout="this.style.opacity='0.2'"></span><span class="hidden image-description">Stop off on the
+            Waterford greenway.</span></div>
+        <div class="gallery-image"><img src="images/nyc_thumb.webp" alt="Image of me in New York City." /><span
+            class="image-mask" ontouchcancel="this.style.opacity='0.2'" ontouchend="this.style.opacity='0.2'"
+            ontouchstart="this.style.opacity='0.0'" onmouseover="this.style.opacity='0.0'"
+            onmouseout="this.style.opacity='0.2'"></span><span class="hidden image-description">Winter break in New York
+            City.</span></div>
+        <div class="gallery-image"><img src="images/beach_thumb.webp" alt="Image of beach at dusk." /><span
+            class="image-mask" ontouchcancel="this.style.opacity='0.2'" ontouchend="this.style.opacity='0.2'"
+            ontouchstart="this.style.opacity='0.0'" onmouseover="this.style.opacity='0.0'"
+            onmouseout="this.style.opacity='0.2'"></span><span class="hidden image-description">A winter's evening walk
+            with my partner at Dollymount Strand.</span></div>
+        <div class="gallery-image"><img src="images/wcbu_thumb.webp" alt="Image of team Ireland." /><span
+            class="image-mask" ontouchcancel="this.style.opacity='0.2'" ontouchend="this.style.opacity='0.2'"
+            ontouchstart="this.style.opacity='0.0'" onmouseover="this.style.opacity='0.0'"
+            onmouseout="this.style.opacity='0.2'"></span><span class="hidden image-description">The Ireland team I
+            played in during the World Championships of Beach Ultimate in 2015 in Dubai.</span></div>
+        <div class="gallery-image"><img src="images/leeds_thumb.webp" alt="Image of Elland Road." /><span
+            class="image-mask" ontouchcancel="this.style.opacity='0.2'" ontouchend="this.style.opacity='0.2'"
+            ontouchstart="this.style.opacity='0.0'" onmouseover="this.style.opacity='0.0'"
+            onmouseout="this.style.opacity='0.2'"></span><span class="hidden image-description">I'm a big Leeds United
+            fan! This is a Leeds vs Preston game at Elland Road I attended.</span></div>
+        <div class="gallery-image"><img src="images/pilot_thumb.webp" alt="Image of me in an aeroplane." /><span
+            class="image-mask" ontouchcancel="this.style.opacity='0.2'" ontouchend="this.style.opacity='0.2'"
+            ontouchstart="this.style.opacity='0.0'" onmouseover="this.style.opacity='0.0'"
+            onmouseout="this.style.opacity='0.2'"></span><span class="hidden image-description">A flying lesson I did.
+            It was something I always wanted to do.</span></div>
+        <div class="gallery-image"><img src="images/puffin_thumb.webp" alt="Image of puffins on Saltee islands." /><span
+            class="image-mask" ontouchcancel="this.style.opacity='0.2'" ontouchend="this.style.opacity='0.2'"
+            ontouchstart="this.style.opacity='0.0'" onmouseover="this.style.opacity='0.0'"
+            onmouseout="this.style.opacity='0.2'"></span><span class="hidden image-description">From a trip to the
+            Saltee islands to see some puffins nesting.</span></div>
+        <div class="gallery-image"><img src="images/snowboarding_thumb.webp" alt="Image of me snowboarding." /><span
+            class="image-mask" ontouchcancel="this.style.opacity='0.2'" ontouchend="this.style.opacity='0.2'"
+            ontouchstart="this.style.opacity='0.0'" onmouseover="this.style.opacity='0.0'"
+            onmouseout="this.style.opacity='0.2'"></span><span class="hidden image-description">My favourite time of
+            year is when I can get away to do some snowboarding.</span></div>
+        <div class="gallery-image"><img src="images/qcon_thumb.webp" alt="Image of QCon tech conference." /><span
+            class="image-mask" ontouchcancel="this.style.opacity='0.2'" ontouchend="this.style.opacity='0.2'"
+            ontouchstart="this.style.opacity='0.0'" onmouseover="this.style.opacity='0.0'"
+            onmouseout="this.style.opacity='0.2'"></span><span class="hidden image-description">A trip to QCon tech
+            conference in London.</span></div>
+        <div class="gallery-image"><img src="images/rome_thumb.webp" alt="Image of inside of Colosseum." /><span
+            class="image-mask" ontouchcancel="this.style.opacity='0.2'" ontouchend="this.style.opacity='0.2'"
+            ontouchstart="this.style.opacity='0.0'" onmouseover="this.style.opacity='0.0'"
+            onmouseout="this.style.opacity='0.2'"></span><span class="hidden image-description">Inside the Colosseum in
+            Rome, one of my favourite cities.</span></div>
+        <div class="gallery-image"><img src="images/vietnam_thumb.webp" alt="Image of rice fields." /><span
+            class="image-mask" ontouchcancel="this.style.opacity='0.2'" ontouchend="this.style.opacity='0.2'"
+            ontouchstart="this.style.opacity='0.0'" onmouseover="this.style.opacity='0.0'"
+            onmouseout="this.style.opacity='0.2'"></span><span class="hidden image-description">Rice fields from Sapa in
+            Vietnam. A highlight trip of mine.</span></div>
+        <div class="gallery-image"><img src="images/dog_thumb.webp" alt="Image of a good dog." /><span
+            class="image-mask" ontouchcancel="this.style.opacity='0.2'" ontouchend="this.style.opacity='0.2'"
+            ontouchstart="this.style.opacity='0.0'" onmouseover="this.style.opacity='0.0'"
+            onmouseout="this.style.opacity='0.2'"></span><span class="hidden image-description">My dog! Here she's won
+            employee of the month..again!</span></div>
+      </div>
+      <div class="overlay">
+        <div id="overlay-inner" class="overlay__inner" role="dialog" aria-modal="true"
+          aria-labelledby="hiddenPhotoNumber" aria-live="assertive">
+          <button id="overlay-close-button" aria-label="Close">
+            <span aria-hidden="true" class="icon material-symbols-outlined">close</span>
+          </button>
+          <div id="overlay-prev-button-div" class="overlay-button-div" tabindex="0" role="button"
+            aria-label="Previous photo" ontouchcancel="this.classList.remove('overlay-button-div-hover')"
+            ontouchend="this.classList.remove('overlay-button-div-hover')"
+            ontouchstart="this.classList.add('overlay-button-div-hover')"
+            onmouseover="this.classList.add('overlay-button-div-hover')"
+            onmouseout="this.classList.remove('overlay-button-div-hover')"
+            onfocus="this.classList.add('overlay-button-div-hover')"
+            onblur="this.classList.remove('overlay-button-div-hover')">
+            <div id="overlay-prev-button-icon">
+              <span aria-hidden="true" class="material-symbols-outlined">arrow_back_ios</span>
+            </div>
+          </div>
+          <img class="non-mobile fade-in" src="" alt="" />
+          <div id="overlay-next-button-div" class="overlay-button-div" tabindex="0" role="button"
+            aria-label="Next photo" ontouchcancel="this.classList.remove('overlay-button-div-hover')"
+            ontouchend="this.classList.remove('overlay-button-div-hover')"
+            ontouchstart="this.classList.add('overlay-button-div-hover')"
+            onmouseover="this.classList.add('overlay-button-div-hover')"
+            onmouseout="this.classList.remove('overlay-button-div-hover')"
+            onfocus="this.classList.add('overlay-button-div-hover')"
+            onblur="this.classList.remove('overlay-button-div-hover')">
+            <div id="overlay-next-button-icon">
+              <span aria-hidden="true" class="material-symbols-outlined">arrow_forward_ios</span>
+            </div>
+          </div>
+          <span id="photoNumber" aria-hidden="true"></span>
+          <span id="photoDescription" aria-live="assertive"></span>
+          <span class="hidden" id="hiddenPhotoNumber"></span>
+
+          <div class="gallery-container">
+            <div class="image-indicators"></div>
+            <div class="slides">
+              <div><img src="images/bike.webp" alt="Image of me on the Waterford greenway." /></div>
+              <div><img src="images/nyc.webp" alt="Image of me in New York City." /></div>
+              <div><img src="images/beach.webp" alt="Image of beach at dusk." /></div>
+              <div><img src="images/wcbu.webp" alt="Image of team Ireland." /></div>
+              <div><img src="images/leeds.webp" alt="Image of Elland Road." /></div>
+              <div><img src="images/pilot.webp" alt="Image of me in an aeroplane." /></div>
+              <div><img src="images/puffin.webp" alt="Image of puffins on Saltee islands." /></div>
+              <div><img src="images/snowboarding.webp" alt="Image of me snowboarding." /></div>
+              <div><img src="images/qcon.webp" alt="Image of QCon tech conference." /></div>
+              <div><img src="images/rome.webp" alt="Image of inside of Colosseum." /></div>
+              <div><img src="images/vietnam.webp" alt="Image of rice fields." /></div>
+              <div><img src="images/dog.webp" alt="Image of a good dog." /></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+    <section id="links">
+      <div class="container">
+        <div class="section-title-div">
+          <div class="section-title-container">
+            <h2>
+              <p class="section-title" tabindex="-1">Links</p>
+            </h2>
+          </div>
+        </div>
+      </div>
+      <div class="links-icon-container reveal">
+        <div><a href="https://www.linkedin.com/in/james-darcy-0aa4b47a" target="_blank" id="linkedin-icon-anchor"
+            aria-label="Select to contact me on LinkedIn"><img id="linkedin-img" alt="Select to contact me on LinkedIn"
+              src="data:image/png;base64,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"></a>
+        </div>
+        <div><a href="mailto:james.darcy5@gmail.com" target="_blank" id="email-icon-anchor"
+            aria-label="Select to contact me via email"><img id="email-img" alt="Select to contact me via email"
+              src="data:image/png;base64,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"></a>
+        </div>
+        <div><a href="https://github.com/jamesdarcy92/jamesdarcy92.github.io" target="_blank" id="github-icon-anchor"
+            aria-label="Select to view the github repository for this website"><img id="github-img"
+            alt="Select to view the github repository for this website"
+            src="data:image/png;base64,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"></a>
+        </div>
+      </div>
+    </section>
+  </main>
 </body>
+<script src="jscript/main.js"></script>
+
+</html>
