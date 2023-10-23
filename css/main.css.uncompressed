@@ -618,15 +618,6 @@ div.portfolio-container {
   border-right: 0px;
 }
 
-/* Safari only */
-@media not all and (min-resolution:.001dpcm) {
-  @media {
-    .timeline-milestones div.milestone:nth-child(odd) {
-      border-top: 0px;
-    }
-  }
-}
-
 .timeline-milestones div.milestone:nth-child(even) .milestone-marker {
   right: 100%;
   margin-right: -19px;
