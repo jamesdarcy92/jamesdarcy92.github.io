@@ -600,6 +600,14 @@ function openGalleryModal(event) {
       const scrollInterval = Math.floor((slideGallery.scrollWidth - slideWidth) / (slideGallery.childElementCount - 1));
       slideGallery.scrollTo(selectedPhotoIndex * scrollInterval, 0);
     } else {
+
+      // Inconsistent behaviour with Safari with fade animation so just remove
+      const browser = getBrowser();
+        
+      if (browser === "Safari" && overlayImage.classList.contains("fade-in")) {
+        overlayImage.classList.remove("fade-in");
+      }
+
       // If not on mobile, use the default photo gallery.
       slidingGalleryContainer.setAttribute("style", "display: none");
       // Hide or display the next and previous buttons depending on which photo was selected
@@ -774,7 +782,12 @@ function nextPhoto(event) {
         let newImage = images[index + 1];
         // Remove fade animation class initially.
         // Will be re-applied at end of function to re-trigger animation.
-        overlayImage.classList.toggle("fade-in");
+        // Inconsistent behaviour with Safari with fade animation so don't toggle there
+        const browser = getBrowser();
+
+        if (browser !== "Safari") {
+          overlayImage.classList.toggle("fade-in");
+        }
         // Thumbnail images have _thumb appended to the image name.
         // The full sized image has the same name minus the _thumb.
         // Set the image src and alt text
@@ -800,7 +813,10 @@ function nextPhoto(event) {
           overlayPrevButton.setAttribute("style", "display: block");
         }
         // Trigger fade animation when navigating between photos
-        overlayImage.classList.toggle("fade-in");
+        // Inconsistent behaviour with Safari with fade animation so don't toggle there
+        if (browser !== "Safari") {
+          overlayImage.classList.toggle("fade-in");
+        }
       }
     }
   }
@@ -825,7 +841,12 @@ function prevPhoto(event) {
         let newImage = images[index - 1];
         // Remove fade animation class initially.
         // Will be re-applied at end of function to re-trigger animation.
-        overlayImage.classList.toggle("fade-in");
+        // Inconsistent behaviour with Safari with fade animation so don't toggle there
+        const browser = getBrowser();
+
+        if (browser !== "Safari") {
+          overlayImage.classList.toggle("fade-in");
+        }
         // Thumbnail images have _thumb appended to the image name.
         // The full sized image has the same name minus the _thumb.
         // Set the image src and alt text
@@ -851,7 +872,10 @@ function prevPhoto(event) {
           overlayNextButton.setAttribute("style", "display: block");
         }
         // Trigger fade animation when navigating between photos
-        overlayImage.classList.toggle("fade-in");
+        // Inconsistent behaviour with Safari with fade animation so don't toggle there
+        if (browser !== "Safari") {
+          overlayImage.classList.toggle("fade-in");
+        }
       }
     }
   }
