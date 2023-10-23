@@ -422,10 +422,10 @@ const slideGallery = document.querySelector('.slides');
 const slides = slideGallery.querySelectorAll('div');
 const imageIndicators = document.querySelector('.image-indicators');
 const slideCount = slides.length;
-const r = document.querySelector(':root');
+var root = document.querySelector(':root');
 var isPortrait = window.matchMedia("(orientation: portrait)").matches;
 var slideWidth = determineSlideWidth();
-r.style.setProperty('--slideWidth', slideWidth + "px");
+root.style.setProperty('--slideWidth', slideWidth + "px");
 var overlayImage = document.querySelector('.overlay__inner img.non-mobile');
 var images = new Array();
 var selectedImage, selectedImageNum;
@@ -451,7 +451,6 @@ window.matchMedia("(orientation: portrait)").addEventListener("change", function
   isPortrait = window.matchMedia("(orientation: portrait)").matches;
   slideWidth = determineSlideWidth();
   // Update the root style so CSS variable value can be propagated
-  var root = document.querySelector(':root');
   root.style.setProperty('--slideWidth', slideWidth + "px");
 })
 
