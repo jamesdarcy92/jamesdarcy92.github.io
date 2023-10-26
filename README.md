@@ -1,5 +1,5 @@
 # jamesdarcy92.github.io
-A website created using Vanilla JavaScript, HTML, and CSS where I purposely used various techniques for responsive, accessible, and mobile-friendly design. The site is also print friendly.
+A website created using Vanilla JavaScript, HTML, and CSS where I purposely used various techniques for responsive, accessible, and mobile-friendly design.
 
 Some techniques and methods used:
 
@@ -11,7 +11,7 @@ Mobile-friendly: Responsive design, scrollable photo gallery, using a combo of J
 
 The performance of the website is also a priority, so techniques were used such as throttling a custom JS on-scroll function, image compression and using webp formant, preloading landing image and pre-connecting to third party artefacts, adding critical CSS and JS inline in HTML document to reduce rendering blocking, adding base64 image sources directly into HTML, and serving minified HTML, CSS and JS files.
 
-Other techniques used on the site were parralax scrolling, use of the Intersection Observer API to reveal and hide text on scroll, custom smooth scroll functionality, CSS animations, icon fonts, sticky navbar and scroll percentage.
+Other techniques used on the site were parralax scrolling, use of the Intersection Observer API to reveal and hide text on scroll, custom smooth scroll functionality, CSS animations, icon fonts, sticky navbar and scroll percentage, print specific styling.
 
 Testing has been done on Windows, MacOs, Android and iOS using Chrome, Edge, Firefox, Brave and Safari on all applicable platforms.
 
